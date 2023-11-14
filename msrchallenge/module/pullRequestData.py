@@ -10,8 +10,11 @@ class PullRequstData:
         self.create_time = create_time
         self.mention_time = mention_time
 
-    def printString(self,author,review_author,body,mention):
-        print("Author:" + author +"\nMentionedAuthor:" + review_author + "\nBody:" + body + "\nmention" + mention)
+    def printString(self):
+        print(self.get_string())
+
+    def get_string(self):
+        return "Author:" + self.writeAuthor +"\nMentionedAuthor:" + self.reviewAuthor + "\nBody:" + self.body + "\nmention" + self.mention
 
 
 

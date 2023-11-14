@@ -2,7 +2,7 @@
 import subprocess
 import json
 from module import pullRequestData, commitData,deleteMatchPull
-import MySQLdb
+import mysql.connector
 
 # Press ⌃R to execute it or replace it with your code.
 # Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
@@ -106,33 +106,22 @@ def addDataBase(cursor, directory, author, reviewer, body, mention , url,create_
     connection.commit()
 
 
-def deleteSamecommit(result):
-    remove_data = {}
-    id = 0
-    for pre_key, pre_value in result.items():
-        for key, value in result.items():
-            if pre_key != key:
-                for p_key, p_value in pre_value.Request_Data.items():
-                    for n_key ,n_value in value.Request_Data.items():
-                        if p_value.writeAuthor == n_value.writeAuthor:#authorとほかのjsonのauthorが一緒かどうかみる　
-                            if p_value.create_time == n_value.create_time:#authorとほかのjsonのauthorが作成したpull requestの作成時間が一緒だったら辞書にいれる
-                                data = deleteMatchPull.deleteMatchPull(p_key, pre_value.Request_Data)
-                                remove_data[id] = data
-                    id +=1
-
-    for pre_key, pre_value in result.items():
-         for key,value in remove_data.items():
-            if pre_value.Request_Data == value:# このif文は一緒にならん
-                print("yes")
-                pre_value.Request_Data.pop(key)
-
-
-
-
+def deleteSamecommit(json_dict):
+    validator = set()
+    distinct_PRs = []
+    for _, pre_value in json_dict.items():
+        for _, p_value in pre_value.Request_Data.items():
+            if p_value.get_string() in validator:
+                # print("already exist")
+                pass
+            else:
+                distinct_PRs.append(p_value)
+                validator.add(p_value.get_string())
+    return distinct_PRs
 
 if __name__ == '__main__':
 
-    connection = MySQLdb.connect(
+    connection = mysql.connector.connect(
         host='127.0.0.1',
         user='me',
         passwd='goma',
@@ -141,7 +130,7 @@ if __name__ == '__main__':
 
     creatTable(cursor)
 
-    fileHead = "DevGPT/"
+    fileHead = "../DevGPT/"
     filePath = ["snapshot_20230727/20230727_195927_pr_sharings.json",
                 "snapshot_20230803/20230803_093947_pr_sharings.json",
                 "snapshot_20230810/20230810_123110_pr_sharings.json",
@@ -152,21 +141,16 @@ if __name__ == '__main__':
                 "snapshot_20230914/20230914_074826_pr_sharings.json",
                 "snapshot_20231012/20231012_233628_pr_sharings.json"]
 
-    result = {}
+    json_dict = {}
     for path in filePath:
-        result[path] = readJson(fileHead + path)
+        json_dict[path] = readJson(fileHead + path)
 
-    deleteSamecommit(result)
+    PRs = deleteSamecommit(json_dict)
+    print(len(PRs))
+    for pr in PRs:
+        print(pr.get_string())
 
-    for k, data in result.items():
-        print("directory : " + k)
-        print("allCommit : " + str(data.allCommit))
-        print("deferentAuthorCommit : " + str(len(data.Request_Data)))
 
-        for value in data.Request_Data.values():
-            addDataBase(cursor, k, value.writeAuthor , value.reviewAuthor , value.body , value.mention , value.url, value.create_time, value.mention_time)
-        #     print("Author:" + value.writeAuthor + "\nMentionedAuthor:" + value.reviewAuthor)
-        # print("-------------------------")
 
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
