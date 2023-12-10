@@ -115,11 +115,10 @@ def deleteSamecommit(json_dict):
 if __name__ == '__main__':
 
     connection = mysql.connector.connect(
-        host='localhost',
-        user='me',
-        passwd='goma',
-        db='pr_commit_db',
-        post = 3306)
+        host='db',
+        user='user',
+        passwd='password',
+        db='pr_commit_db')
     cursor = connection.cursor()
 
     creatTable(cursor)

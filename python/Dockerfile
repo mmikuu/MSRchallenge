@@ -11,7 +11,7 @@ RUN pip install -U \
 RUN apt update -y
 RUN apt-get install tk -y
 COPY ./src ${WORK_DIR}/src
-#COPY ./DevGPT ${WORK_DIR}/DevGPT
+COPY ./DevGPT ${WORK_DIR}/DevGPT
 COPY ./requirements.txt ${WORK_DIR}/requirements.txt
 
 RUN pip install -r requirements.txt
