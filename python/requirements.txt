@@ -1,4 +1,6 @@
 configparser==6.0.0
+mercurial==6.5.2
 mysql-connector==2.2.9
 mysql-connector-python==8.2.0
+mysqlclient==2.2.0
 protobuf==4.21.12

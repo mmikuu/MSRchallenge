@@ -1,0 +1,37 @@
+version: "3.7"
+services:
+  db:
+    build:
+      context: ./database
+      dockerfile: ./Dockerfile
+    volumes:
+        - ./outputs:/work/db_outputs
+    ports:
+      - "3306:3306"
+    expose:
+      - 3306
+    container_name: ChatGptReviewDB
+    environment:
+      MYSQL_ROOT_PASSWORD: goma
+      MYSQL_DATABASE: pr_commit_db
+      MYSQL_USER: me
+      MYSQL_PASSWORD: goma
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u$$MYSQL_USER -p$$MYSQL_PASSWORD
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  app:
+    build:
+      context: ./Python
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./outputs:/work/py_outputs
+    container_name: ChatGptReview
+    depends_on:
+      db:
+        condition: service_healthy
+
+

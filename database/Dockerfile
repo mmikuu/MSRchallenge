@@ -1,9 +1,9 @@
 FROM mysql:8.2.0
 
-ENV MYSQL_ROOT_PASSWORD goma
-ENV MYSQL_DATABASE pr_commit_db
-ENV MYSQL_USER me
-ENV MYSQL_PASSWORD goma
+#ENV MYSQL_ROOT_PASSWORD goma
+#ENV MYSQL_DATABASE pr_commit_db
+#ENV MYSQL_USER me
+#ENV MYSQL_PASSWORD goma
 
 COPY ./my.conf /etc/mysql/conf.d/my.cnf
 
