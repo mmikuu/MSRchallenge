@@ -1,22 +1,43 @@
 # This is a sample Python script.
 import subprocess
+from subprocess import PIPE
 import json
 from module import pullRequestData, commitData, projectData
 import mysql.connector
-
+import os
+import time
 
 #
 # 　git clone
 #
-def gitClone():
-    repository_url = 'https://github.com/NAIST-SE/DevGPT.git'
-    destination_directory = '/Users/watanabemiku/PycharmProjects/MsrChallenge/DevGPT'
-
+work_directory = '/work/'
+work_directory = os.getcwd()+"/../"
+git_directory = work_directory+"DevGPT"
+def run_command(command):
+    print(command)
     try:
-        subprocess.check_call(['git', 'clone', repository_url, destination_directory])
-        print(f'Repository cloned to {destination_directory}')
+        proc = subprocess.Popen(command, shell=True, stdout=PIPE, stderr=PIPE, text=True)
+        result = proc.communicate()
+        #subprocess.check_call(command)
     except subprocess.CalledProcessError as e:
         print(f'Error: {e}')
+
+# Currently the repository is down
+def git_clone():
+    repository_url = 'https://github.com/NAIST-SE/DevGPT.git'
+    command = f'git clone --depth=1 {repository_url} {git_directory}'
+    run_command(command)
+    print(f'Repository cloned to {git_directory}')
+
+def wget_repo():
+    url = "https://zenodo.org/records/10086809/files/DevGPT.zip"
+    # For faster download
+    url = '"https://www.dropbox.com/scl/fi/gmk78pj7wzans0xwnh54r/DevGPT.zip?rlkey=0whnsupvytss5hftvcr0kr6k0&dl=1"'
+    run_command(f"wget -O {git_directory}.zip {url}")
+    print(f'Repository downloaded to {work_directory}')
+    import zipfile
+    with zipfile.ZipFile(f"{git_directory}.zip", 'r') as zip_ref:
+        zip_ref.extractall(work_directory)
 
 
 #
@@ -27,9 +48,13 @@ def readJson(filePath):
     AllProject_list = set()
     FilteredProject_list = set()
     AllPR = set()
-    AllLink =set()
+    AllLink = set()
     FilteredPR = set()
     Id = 0
+
+    if not os.path.isfile(filePath):
+        print("not cloned yet")
+        time.sleep(120)
 
     with open(filePath) as f:
         di = json.load(f)
@@ -113,7 +138,7 @@ def deleteSamecommit(json_dict):
 
 
 if __name__ == '__main__':
-
+    wget_repo()
     connection = mysql.connector.connect(
         host='db',
         user='user',
@@ -123,7 +148,8 @@ if __name__ == '__main__':
 
     creatTable(cursor)
 
-    fileHead = "../DevGPT/"
+    #fileHead = "../DevGPT/"
+    fileHead = git_directory+"/"
     filePath = [  # "snapshot_20230727/20230727_195927_pr_sharings.json",
         # "snapshot_20230803/20230803_093947_pr_sharings.json",
         # "snapshot_20230810/20230810_123110_pr_sharings.json",
