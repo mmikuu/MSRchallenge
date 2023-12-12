@@ -10,7 +10,7 @@ import time
 #
 # 　git clone
 #
-work_directory = '/work/'
+# work_directory = '/work/'
 work_directory = os.getcwd()+"/../"
 git_directory = work_directory+"DevGPT"
 def run_command(command):
@@ -30,7 +30,7 @@ def git_clone():
     print(f'Repository cloned to {git_directory}')
 
 def wget_repo():
-    url = "https://zenodo.org/records/10086809/files/DevGPT.zip"
+    # url = "https://zenodo.org/records/10086809/files/DevGPT.zip"
     # For faster download
     url = '"https://www.dropbox.com/scl/fi/gmk78pj7wzans0xwnh54r/DevGPT.zip?rlkey=0whnsupvytss5hftvcr0kr6k0&dl=1"'
     run_command(f"wget -O {git_directory}.zip {url}")
@@ -79,7 +79,7 @@ def readJson(filePath):
                 FilteredPR.add(source.get('URL', []))
 
                 Id += 1
-                Request_Data[Id] = pullRequestData.PullRequstData(author, body, mentioned_author, mentioned_text,
+                Request_Data[Id] = pullRequestData.PullRequestData(author, body, mentioned_author, mentioned_text,
                                                                   mentioned_url,
                                                                   create_time)
 

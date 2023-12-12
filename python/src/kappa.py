@@ -1,12 +1,12 @@
 from sklearn.metrics import cohen_kappa_score
 
 def calc_kappa(eval,eva2,title):
-    # Cohen's Kappa係数を計算
+    # Cohen's Kappa
     kappa = cohen_kappa_score(eval, eva2, weights='linear')
     print(title, kappa)
 
 if __name__ == '__main__':
-    # 2つの評価者の評価データ（6x6の混同行列）
+    # （6x6）
     Mevaluator1 = [46,16,9,48,10,3,1]
     Kevaluator2 = [43,15,10,49,10,5,1]
 

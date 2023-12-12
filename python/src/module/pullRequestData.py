@@ -1,4 +1,4 @@
-class PullRequstData:
+class PullRequestData:
 
     def __init__(self, author,body,review_author,mention,url,create_time):
         self.writeAuthor = author
